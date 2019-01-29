@@ -1,0 +1,10 @@
+ciso8601==2.1.1
+cycler==0.10.0
+kiwisolver==1.0.1
+matplotlib==3.0.2
+maxminddb==1.4.1
+maxminddb-geolite2==2018.703
+numpy==1.16.0
+pyparsing==2.3.1
+python-dateutil==2.7.5
+six==1.12.0
