@@ -6,6 +6,8 @@ Created on Tue Jan 29 08:22:24 2019
 """
 import json
 import datetime
+import matplotlib
+matplotlib.use('Agg')
 import time
 import sqlite3
 import ciso8601
@@ -73,7 +75,7 @@ def couple_used(db='stats.db'):
     for row in c:
         text+='\n|' + str(row[0]) + "|" +  str(row[1]) + "|" + str(row[2]) + "|"
        
-    text+='\n```\n\n'
+    text+='\n\n'
     conn.close()
     return text
 
@@ -82,7 +84,7 @@ def couple_used(db='stats.db'):
 
 
 
-with open('./cowrie.json', "r") as f:
+with open('/home/cowrie/cowrie/var/log/cowrie/cowrie.json', "r") as f:
     datas = f.readlines()
 f.closed
 conn = sqlite3.connect('stats.db')
