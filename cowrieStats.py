@@ -26,7 +26,7 @@ def pie_graph(sql, alternate_text, savefile, limit=5, db='stats.db'):
     datasClean = datas
     if len(nbs) > limit :
         nbsClean = nbs[0:limit] + [sum(nbs[limit:])]
-        datasClean = datas[0:limit] + ["Autres (" + str(len(nbs[limit:])) + " " + alternate_text + ")" ]
+        datasClean = [datas[i].replace("$","\\$") for i in range(0,limit)] + ["Autres (" + str(len(nbs[limit:])) + " " + alternate_text + ")" ]
     fig1, ax1 = plt.subplots()
     ax1.pie(nbsClean, labels=datasClean, autopct='%1.1f%%',
             shadow=True, startangle=90)
@@ -96,16 +96,19 @@ c.execute("DELETE  from success where datetime(timestamp, 'unixepoch') <= date('
 c.execute("DELETE  from failed where datetime(timestamp, 'unixepoch') <= date('"+ str(oldest) +"')")
 c.execute("DELETE  from command where datetime(timestamp, 'unixepoch') <= date('"+ str(oldest) +"')")
 for data in datas :
-    jsonData = json.loads(data)
+    try :
+        jsonData = json.loads(data)
+    except:
+        print(data)
     if jsonData['eventid'] != None:
         t = jsonData['timestamp']
         ts = ciso8601.parse_datetime(t)
         ts = time.mktime(ts.timetuple())
-        loc = reader.get(jsonData['src_ip'])['country']['names']['fr']
-
+        
         
         if jsonData['eventid'] == "cowrie.login.success":
             try :
+                loc = reader.get(jsonData['src_ip'])['country']['names']['fr']
                 keys = (jsonData['session'],jsonData['username'],jsonData['password'],int(ts),jsonData['src_ip'],loc)
                 c.execute("insert into success values (?,?,?,?,?,?)", keys )
             except :
@@ -113,6 +116,7 @@ for data in datas :
                 
         elif jsonData['eventid'] == "cowrie.login.failed":
             try :
+                loc = reader.get(jsonData['src_ip'])['country']['names']['fr']
                 keys = (jsonData['session'],jsonData['username'],jsonData['password'],int(ts),jsonData['src_ip'],loc)
                 c.execute("insert into failed values (?,?,?,?,?,?)", keys )
             except :
